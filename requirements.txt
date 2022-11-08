@@ -1,3 +1,2 @@
-numpy
-pyaudio
-requests
+numpy==1.23.4
+PyAudio==0.2.12

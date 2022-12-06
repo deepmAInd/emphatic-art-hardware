@@ -14,7 +14,7 @@ from skimage.util import img_as_ubyte
 from tensorflow import keras
 
 
-MODEL_NAME = 'ResNet50V2_Dense256_combined_acc92'
+MODEL_NAME = 'model_comb_v1_6iter'
 
 MODELS_PATH = 'models'
 
@@ -40,7 +40,7 @@ CHANNELS = 1
 RATE = 44100
 
 # How often surrounding sound will be analysed
-RECORD_SECONDS = 2
+RECORD_SECONDS = 5
 
 IMG_SIZE = (224, 224)
 
@@ -88,8 +88,8 @@ def convert_to_image(data, save_path):
 
     # Trimming the silence in the beginning and end
     # xt, index = librosa.effects.trim(norm_sound, top_db = 30)
-    # final_x = nr.reduce_noise(y=xt,
-    #                           y_noise=xt,sr=44100)
+    # final_x = nr.reduce_noise(y=norm_sound,
+    #                           y_noise=norm_sound,sr=44100)
     # padded_x = np.pad(xt, (0, samplerate * RECORD_SECONDS - len(xt)), 'constant')
 
     # Saving as image
@@ -98,6 +98,23 @@ def convert_to_image(data, save_path):
     img = np.repeat(img[..., np.newaxis], 3, -1)# (64, 224, 224, 3)
     # print(img) 
     return img
+
+
+def convert_to_mfcc(data, save_path):
+    mfcc_data = librosa.feature.mfcc(y=data, sr=RATE)
+    print(mfcc_data.shape)
+    if mfcc_data.shape[1] < 229:
+        arr_ = np.zeros((20, 229 - mfcc_data.shape[1]))
+        mfcc_data = np.append(mfcc_data, arr_, axis = 1)
+    else:
+        if mfcc_data.shape[1] > 229:
+            indexes = []
+            for i in range(229, mfcc_data.shape[1]):
+                indexes.append(i)
+            mfcc_data = np.delete(mfcc_data, indexes, axis=1)
+    mfcc_data = np.array(mfcc_data) / 255
+    return mfcc_data
+    
 
 def start_predicting():
 
@@ -124,8 +141,10 @@ def start_predicting():
         y = y.astype(np.float32)
         
         img = convert_to_image(y, "tmp.png")
-        # print(img.shape)
-        res = MODEL.predict(np.expand_dims(img, axis=0))
+        mfcc = convert_to_mfcc(y, "tmp.png")
+        print(img.shape)
+        print(mfcc.shape)
+        res = MODEL.predict([np.expand_dims(img, axis=0), np.expand_dims(mfcc, axis=0)])
         print(np.argmax(res))
         print(res[0].astype(float))
         print(list(EMOTIONS_MAP.keys())[list(EMOTIONS_MAP.values()).index(np.argmax(res))])

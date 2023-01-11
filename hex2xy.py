@@ -1,11 +1,11 @@
 def convert(hex):
-    
+
     # Format HEX string
     if hex[0] == "#":
         hex = hex[1:]
 
     # Convert HEX to RGB
-    r,g,b = tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+    r, g, b = tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4))
 
     # Calculate CIE 1931 XYZ color
     x = r * 0.649926 + g * 0.103455 + b * 0.197109

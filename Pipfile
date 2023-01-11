@@ -6,6 +6,15 @@ name = "pypi"
 [packages]
 numpy = "*"
 pyaudio = "*"
+requests = "*"
+scipy = "*"
+scikit-learn = "*"
+matplotlib = "*"
+librosa = "*"
+black = "*"
+noisereduce = "*"
+keyboard = "*"
+isort = "*"
 
 [dev-packages]
 

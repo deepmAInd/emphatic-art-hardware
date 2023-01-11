@@ -8,7 +8,6 @@ sample_format = pyaudio.paInt16  # 16 bits per sample
 channels = 1  # 1 indicates mono, 2 indicates suround sound
 sample_rate = 44100  # record at 44100 samples per second
 seconds = 5  # change for diferent lengths of audio based on model
-# filename = f"data/recordings/{uuid4()}"
 
 p = pyaudio.PyAudio()  # create an interface to PortAudio
 
